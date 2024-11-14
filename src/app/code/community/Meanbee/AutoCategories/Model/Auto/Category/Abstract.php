@@ -109,6 +109,7 @@ abstract class Meanbee_AutoCategories_Model_Auto_Category_Abstract extends Mage_
         }
 
         $this->getConnection()->delete($this->getCategoryProductTable(), $where);
+        $this->getConnection()->delete($this->getCategoryProductIndexTable(), $where);
 
         // Add products if they match the filter
         if (!empty($products)) {
@@ -129,6 +130,9 @@ abstract class Meanbee_AutoCategories_Model_Auto_Category_Abstract extends Mage_
         if(Mage::helper('catalog/category_flat')->isEnabled()){
             Mage::getSingleton('index/indexer')->getProcessByCode('catalog_category_product')->reindexEverything();
         }
+        // load category id $category_id then save
+        //$category = Mage::getModel('catalog/category')->load($category_id);
+        //$category->save();
 
         Mage::app()->setCurrentStore($originalStore);
     }
@@ -158,5 +162,14 @@ abstract class Meanbee_AutoCategories_Model_Auto_Category_Abstract extends Mage_
      */
     protected function getCategoryProductTable() {
         return Mage::getModel('core/resource')->getTableName('catalog/category_product');
+    }
+
+    /**
+     * Return the name of the table used to store products in categories index.
+     *
+     * @return string
+     */
+    protected function getCategoryProductIndexTable() {
+        return Mage::getModel('core/resource')->getTableName('catalog/category_product_index');
     }
 }
